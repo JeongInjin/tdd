@@ -4,6 +4,8 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.annotation.Profile;
 
 import java.time.Duration;
@@ -16,25 +18,25 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class StudyTest {
 
-    @BeforeAll
-    static void beforeAll() {
-        System.out.println("beforeAll");
-    }
-
-    @AfterAll
-    static void afterAll() {
-        System.out.println("afterAll");
-    }
-
-    @BeforeEach
-    void beforeEach() {
-        System.out.println("beforeEach");
-    }
-
-    @AfterEach
-    void afterEach() {
-        System.out.println("afterEach");
-    }
+//    @BeforeAll
+//    static void beforeAll() {
+//        System.out.println("beforeAll");
+//    }
+//
+//    @AfterAll
+//    static void afterAll() {
+//        System.out.println("afterAll");
+//    }
+//
+//    @BeforeEach
+//    void beforeEach() {
+//        System.out.println("beforeEach");
+//    }
+//
+//    @AfterEach
+//    void afterEach() {
+//        System.out.println("afterEach");
+//    }
 
     @Test
     @Disabled
@@ -127,7 +129,46 @@ class StudyTest {
     }
 
 
+    @Test
+    @Tag("fast")
+    @DisplayName("fast tag test")
+    void fastTagTest() {
+        Study actual = new Study(10);
+        assertThat(actual.getLimit()).isGreaterThan(0);
+        System.out.println("fast tag");
+    }
 
+    @Test
+    @Tag("slow")
+    @DisplayName("slow tag test")
+    void slowTagTest() {
+        Study actual = new Study(10);
+        assertThat(actual.getLimit()).isGreaterThan(0);
+        System.out.println("slow tag");
+    }
+
+    @Test
+    @FastTest
+    @DisplayName("fastTest annotaion test")
+    void fastAnnotationTest() {
+        Study actual = new Study(10);
+        assertThat(actual.getLimit()).isGreaterThan(0);
+        System.out.println("fast annotation");
+    }
+
+
+    @DisplayName("반복테스트")
+    @RepeatedTest(value = 10, name = "{displayName}, {currentRepetition}/{totalRepetitions}")
+    void repeatTest(RepetitionInfo repetitionInfo) {
+        System.out.println("repetitionInfo = " + repetitionInfo);
+    }
+
+    @DisplayName("반복테스트+값 변경")
+    @ParameterizedTest(name = "{index} {displayName} message = {0}")
+    @ValueSource(strings = {"반복적인", "테스트시", "여러가지", "parameter를", "정의합니다."})
+    void parameterize(String message) {
+        System.out.println(message);
+    }
 
 
 }

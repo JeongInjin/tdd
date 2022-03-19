@@ -11,6 +11,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Test
-@Tag("fast")
-public @interface FastTest {
+@Tag("slow")
+public @interface SlowTest {
 }
