@@ -25,8 +25,9 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 /**
  * 해당 인스턴스 전략을 변경하면 하나의 클래스안에서 같은 인스턴스를 공유하게 된다.
  * 해당 전략을 사용하면, BeforeAll, AfterAll 같은 메서드는 static 이 아니여도 된다.(private 만 적용)
+ * resources 에서 전역으로 변경 가능하다.
  */
-@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+//@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 /**
  * 각 테스트 별로 의존성을 가지면 안되지만 시나리오 테스트, 등 원하는 순서에 따라 테스트를 원할 수 있고, 필요할 때가 있다.
  * 몇가지 방법이 존재한다.
@@ -35,8 +36,9 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class StudyTest {
+    int value = 1;
 
-//    @BeforeAll
+//    @BeforeAll®
 //    static void beforeAll() {
 //        System.out.println("beforeAll");
 //    }
@@ -64,16 +66,16 @@ class StudyTest {
 
     @Test
     @Order(2)
-    @DisplayName("Order tesst - order2")
-    void orderTest1() {
-        System.out.println("order 2");
+    @DisplayName("Order_test - order2")
+    void order_Test1() {
+        System.out.println("order 2 - " + value++);
     }
 
     @Test
     @Order(1)
-    @DisplayName("Order tesst - order1")
-    void orderTest2() {
-        System.out.println("order 1");
+    @DisplayName("Order_test - order1")
+    void order_Test2() {
+        System.out.println("order 1 - " + value++);
     }
 
     @Test
