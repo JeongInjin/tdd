@@ -4,10 +4,22 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
+import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.aggregator.AggregateWith;
+import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
+import org.junit.jupiter.params.aggregator.ArgumentsAggregationException;
+import org.junit.jupiter.params.aggregator.ArgumentsAggregator;
+import org.junit.jupiter.params.converter.ArgumentConversionException;
+import org.junit.jupiter.params.converter.ConvertWith;
+import org.junit.jupiter.params.converter.SimpleArgumentConverter;
+import org.junit.jupiter.params.provider.CsvSource;
+import org.junit.jupiter.params.provider.EmptySource;
+import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.context.annotation.Profile;
 
+import javax.xml.transform.Source;
 import java.time.Duration;
 
 import static com.tdd.programmer.StudyStatus.DRAFT;
@@ -169,6 +181,67 @@ class StudyTest {
     void parameterize(String message) {
         System.out.println(message);
     }
+
+
+    @DisplayName("한개의 값을 class 로 변환하여 값을 받는다.")
+    @ParameterizedTest(name = "{index} {displayName} message = {0}")
+//    @EmptySource
+//    @NullAndEmptySource
+//    @NullAndEmptySource
+    @ValueSource(ints = {10, 20, 30, 40, 50})
+    void parameterize2(@ConvertWith(StudyConvert.class) Study study) {
+        System.out.println(study.getLimit());
+    }
+
+    static class StudyConvert extends SimpleArgumentConverter {
+
+        @Override
+        protected Object convert(Object source, Class<?> targetType) throws ArgumentConversionException {
+            assertEquals(Study.class, targetType, "Can only convert to Study");
+            return new Study(Integer.parseInt(source.toString()));
+        }
+    }
+
+    @DisplayName("여러 인자를 받는다")
+    @ParameterizedTest(name = "{index} {displayName} message = {0}")
+//    @EmptySource
+//    @NullAndEmptySource
+//    @NullAndEmptySource
+    @CsvSource({"10, '여러'", "20, 인자를", "30, 받는다"})
+    void parameterize3(Integer limit, String name) {
+        String xx = name;
+        System.out.println(new Study(limit, xx));
+    }
+
+    @DisplayName("여러 인자를 class 로 받는다")
+    @ParameterizedTest(name = "{index} {displayName} message = {0}")
+//    @EmptySource
+//    @NullAndEmptySource
+//    @NullAndEmptySource
+    @CsvSource({"10, '여러'", "20, 인자를", "30, 받는다"})
+    void parameterize4(ArgumentsAccessor argumentsAccessor) {
+        Study study = new Study(argumentsAccessor.getInteger(0), argumentsAccessor.getString(1));
+        System.out.println(study);
+    }
+
+    @DisplayName("여러 인자를 class 로 받는다 - 다른 방법")
+    @ParameterizedTest(name = "{index} {displayName} message = {0}")
+//    @EmptySource
+//    @NullAndEmptySource
+//    @NullAndEmptySource
+    @CsvSource({"10, '여러'", "20, 인자를", "30, 받는다"})
+    void parameterize5(@AggregateWith(StudyAggregator.class) Study study) {
+        System.out.println(study);
+    }
+
+    static class StudyAggregator implements ArgumentsAggregator {
+
+        @Override
+        public Object aggregateArguments(ArgumentsAccessor accessor, ParameterContext context) throws ArgumentsAggregationException {
+            return new Study(accessor.getInteger(0), accessor.getString(1));
+        }
+    }
+
 
 
 }
