@@ -2,7 +2,6 @@ package com.tdd.programmer;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.DisabledOnOs;
-import org.junit.jupiter.api.condition.EnabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ParameterContext;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,12 +13,8 @@ import org.junit.jupiter.params.converter.ArgumentConversionException;
 import org.junit.jupiter.params.converter.ConvertWith;
 import org.junit.jupiter.params.converter.SimpleArgumentConverter;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.EmptySource;
-import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.context.annotation.Profile;
 
-import javax.xml.transform.Source;
 import java.time.Duration;
 
 import static com.tdd.programmer.StudyStatus.DRAFT;
@@ -27,6 +22,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
+/**
+ * 해당 인스턴스 전략을 변경하면 하나의 클래스안에서 같은 인스턴스를 공유하게 된다.
+ * 해당 전략을 사용하면, BeforeAll, AfterAll 같은 메서드는 static 이 아니여도 된다.(private 만 적용)
+ */
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+/**
+ * 각 테스트 별로 의존성을 가지면 안되지만 시나리오 테스트, 등 원하는 순서에 따라 테스트를 원할 수 있고, 필요할 때가 있다.
+ * 몇가지 방법이 존재한다.
+ * 메소드 위 @Order 로 지정하되, JUnit 이 제공하는 Order 를 사용해야 한다.
+ */
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class StudyTest {
 
@@ -54,6 +60,20 @@ class StudyTest {
     @Disabled
     void disabled() {
         System.out.println("disabled");
+    }
+
+    @Test
+    @Order(2)
+    @DisplayName("Order tesst - order2")
+    void orderTest1() {
+        System.out.println("order 2");
+    }
+
+    @Test
+    @Order(1)
+    @DisplayName("Order tesst - order1")
+    void orderTest2() {
+        System.out.println("order 1");
     }
 
     @Test
