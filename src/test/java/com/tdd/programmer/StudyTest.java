@@ -1,12 +1,17 @@
 package com.tdd.programmer;
 
 import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.condition.DisabledOnOs;
+import org.junit.jupiter.api.condition.EnabledOnOs;
+import org.junit.jupiter.api.condition.OS;
+import org.springframework.context.annotation.Profile;
 
 import java.time.Duration;
 
 import static com.tdd.programmer.StudyStatus.DRAFT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class StudyTest {
@@ -91,6 +96,32 @@ class StudyTest {
     @Test
     @DisplayName("assertj 라이브러리 의 assertThat test")
     void create5() {
+        Study actual = new Study(10);
+        assertThat(actual.getLimit()).isGreaterThan(0);
+    }
+
+    @Test
+    @DisplayName("조건에 따라 테스트를 실행한다.")
+    void assumeTrueTest() {
+        String test_env = System.getenv("TEST_ENV");
+        System.out.println("test_env = " + test_env);
+
+        assumeTrue("LOCAL".equalsIgnoreCase(test_env));
+
+        Study actual = new Study(10);
+        assertThat(actual.getLimit()).isGreaterThan(0);
+    }
+
+    @Test
+//    @EnabledOnOs({OS.MAC, OS.LINUX})
+    @DisabledOnOs({OS.MAC, OS.LINUX})
+    @DisplayName("profile 조건에 따라 테스트를 실행한다.")
+    void osTest() {
+        String test_env = System.getenv("TEST_ENV");
+        System.out.println("test_env = " + test_env);
+
+        assumeTrue("LOCAL".equalsIgnoreCase(test_env));
+
         Study actual = new Study(10);
         assertThat(actual.getLimit()).isGreaterThan(0);
     }
