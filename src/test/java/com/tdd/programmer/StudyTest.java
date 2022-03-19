@@ -4,6 +4,7 @@ import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
 import org.junit.jupiter.api.extension.ParameterContext;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.aggregator.AggregateWith;
 import org.junit.jupiter.params.aggregator.ArgumentsAccessor;
@@ -34,9 +35,18 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
  * 메소드 위 @Order 로 지정하되, JUnit 이 제공하는 Order 를 사용해야 한다.
  */
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+/**
+ * 내가 정의한 class 를 적용시킨다.
+ * 아래는 그냥 선언적인 방법을 이용한 ExtendWith annotation 예시
+ * 아래방법으로는 커스텀 할 수 없는 단점이 존재하여 @RegisterExtension 을 이용하여 정의한다.
+ */
+//@ExtendWith(FindSlowTestExtension.class)
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 class StudyTest {
     int value = 1;
+
+    @RegisterExtension
+    static FindSlowTestExtension findSlowTestExtension = new FindSlowTestExtension(1000L);
 
 //    @BeforeAll®
 //    static void beforeAll() {
@@ -66,8 +76,10 @@ class StudyTest {
 
     @Test
     @Order(2)
+    @SlowTest
     @DisplayName("Order_test - order2")
-    void order_Test1() {
+    void order_Test1() throws InterruptedException {
+//        Thread.sleep(1005L);
         System.out.println("order 2 - " + value++);
     }
 
@@ -111,7 +123,7 @@ class StudyTest {
     void create3() {
         assertTimeout(Duration.ofMillis(1000), () ->{
             new Study(11);
-            Thread.sleep(300);
+//            Thread.sleep(300);
         });
     }
 
