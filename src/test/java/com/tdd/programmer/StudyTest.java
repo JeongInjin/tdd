@@ -1,5 +1,6 @@
 package com.tdd.programmer;
 
+import com.tdd.programmer.domain.Study;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.condition.DisabledOnOs;
 import org.junit.jupiter.api.condition.OS;
@@ -18,7 +19,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.Duration;
 
-import static com.tdd.programmer.StudyStatus.DRAFT;
+import static com.tdd.programmer.domain.StudyStatus.DRAFT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
@@ -96,7 +97,7 @@ class StudyTest {
         Study study = new Study(1);
         assertNotNull(study);
         assertEquals(DRAFT, study.getStatus(), () -> "스터디를 처음 만들면 성태값은 "+  DRAFT + " 여야 한다.");
-        assertTrue(study.getLimit() > 0, "스터디 최대 참석 가능 인원은 0보다 커야 합니다.");
+        assertTrue(study.getLimitCount() > 0, "스터디 최대 참석 가능 인원은 0보다 커야 합니다.");
     }
 
     @Test
@@ -106,7 +107,7 @@ class StudyTest {
         assertAll(
                 () -> assertNotNull(study),
                 () -> assertEquals(DRAFT, study.getStatus(), () -> "스터디를 처음 만들면 성태값은 "+  DRAFT + " 여야 한다."),
-                () -> assertTrue(study.getLimit() > 0, "스터디 최대 참석 가능 인원은 0보다 커야 합니다.")
+                () -> assertTrue(study.getLimitCount() > 0, "스터디 최대 참석 가능 인원은 0보다 커야 합니다.")
         );
     }
 
@@ -145,7 +146,7 @@ class StudyTest {
     @DisplayName("assertj 라이브러리 의 assertThat test")
     void create5() {
         Study actual = new Study(10);
-        assertThat(actual.getLimit()).isGreaterThan(0);
+        assertThat(actual.getLimitCount()).isGreaterThan(0);
     }
 
     @Test
@@ -157,7 +158,7 @@ class StudyTest {
         assumeTrue("LOCAL".equalsIgnoreCase(test_env));
 
         Study actual = new Study(10);
-        assertThat(actual.getLimit()).isGreaterThan(0);
+        assertThat(actual.getLimitCount()).isGreaterThan(0);
     }
 
     @Test
@@ -171,7 +172,7 @@ class StudyTest {
         assumeTrue("LOCAL".equalsIgnoreCase(test_env));
 
         Study actual = new Study(10);
-        assertThat(actual.getLimit()).isGreaterThan(0);
+        assertThat(actual.getLimitCount()).isGreaterThan(0);
     }
 
 
@@ -180,7 +181,7 @@ class StudyTest {
     @DisplayName("fast tag test")
     void fastTagTest() {
         Study actual = new Study(10);
-        assertThat(actual.getLimit()).isGreaterThan(0);
+        assertThat(actual.getLimitCount()).isGreaterThan(0);
         System.out.println("fast tag");
     }
 
@@ -189,7 +190,7 @@ class StudyTest {
     @DisplayName("slow tag test")
     void slowTagTest() {
         Study actual = new Study(10);
-        assertThat(actual.getLimit()).isGreaterThan(0);
+        assertThat(actual.getLimitCount()).isGreaterThan(0);
         System.out.println("slow tag");
     }
 
@@ -198,7 +199,7 @@ class StudyTest {
     @DisplayName("fastTest annotaion test")
     void fastAnnotationTest() {
         Study actual = new Study(10);
-        assertThat(actual.getLimit()).isGreaterThan(0);
+        assertThat(actual.getLimitCount()).isGreaterThan(0);
         System.out.println("fast annotation");
     }
 
@@ -224,7 +225,7 @@ class StudyTest {
 //    @NullAndEmptySource
     @ValueSource(ints = {10, 20, 30, 40, 50})
     void parameterize2(@ConvertWith(StudyConvert.class) Study study) {
-        System.out.println(study.getLimit());
+        System.out.println(study.getLimitCount());
     }
 
     static class StudyConvert extends SimpleArgumentConverter {

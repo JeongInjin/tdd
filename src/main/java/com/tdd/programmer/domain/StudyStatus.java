@@ -1,4 +1,4 @@
-package com.tdd.programmer;
+package com.tdd.programmer.domain;
 
 public enum StudyStatus {
     DRAFT,
