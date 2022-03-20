@@ -6,7 +6,6 @@ import com.tdd.programmer.member.MemberService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
@@ -18,11 +17,24 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class StudyServiceTest {
+
+    /**
+     * mock annotation 사용 방법
+     *
+     * @Mock annotation 을 이용하고, @ExtendWith(MockitoExtension.class) 로 사용을 정의해 주어야 한다.
+     * 아래 방법은 mock 을 공통으로 사용할 시
+     */
+
+    @Mock
+    MemberService memberService;
+    @Mock
+    StudyRepository studyRepository;
 
     /**
      * test 에 앞서 StudyService 인스턴스 생성시 MemberService, StudyRepository 를 생성자로 전달해 줘야 하는데,
@@ -214,17 +226,6 @@ class StudyServiceTest {
         assertNotNull(studyService);
     }
 
-    /**
-     * mock annotation 사용 방법
-     * @Mock annotation 을 이용하고, @ExtendWith(MockitoExtension.class) 로 사용을 정의해 주어야 한다.
-     * 아래 방법은 mock 을 공통으로 사용할 시
-     */
-
-    @Mock
-    MemberService memberService;
-    @Mock
-    StudyRepository studyRepository;
-
     @Test
     void createStudyServiceByMockito2() {
         StudyService studyService = new StudyService(memberService, studyRepository);
@@ -239,6 +240,58 @@ class StudyServiceTest {
     void createStudyServiceByMockito3(@Mock MemberService memberService, @Mock StudyRepository studyRepository) {
         StudyService studyService = new StudyService(memberService, studyRepository);
         assertNotNull(studyService);
+
+        Member member = new Member();
+        member.setId(1L);
+        member.setEmail("injin@email.com");
+
+        //when - > 조건을 받아 mock 객체를 반환한다. Argument matchers 의 any() 를 사용하면 모든것을 허용한다.
+//        when(memberService.findById(1L)).thenReturn(Optional.of(member));
+        when(memberService.findById(any())).thenReturn(Optional.of(member));
+
+//        when(memberService.findById(1L)).thenThrow(new RuntimeException());
+
+        doThrow(new IllegalArgumentException()).when(memberService).validate(1L);
+        assertThrows(IllegalArgumentException.class, () -> {
+            memberService.validate(1L);
+        });
+
+        Study study = new Study(10, "java");
+
+        Optional<Member> findMember = memberService.findById(2L);
+        assertEquals("injin@email.com", findMember.get().getEmail());
+
+//        studyService.createNewStudy(1L, study);
+
+    }
+
+    /**
+     * 메소드가 동일한 매개변수로 여러번 호출될 때 각기 다르게 행동하도록 조작할 수 있다.
+     */
+    @Test
+    void createStudyServiceByMockito4(@Mock MemberService memberService, @Mock StudyRepository studyRepository) {
+        StudyService studyService = new StudyService(memberService, studyRepository);
+        assertNotNull(studyService);
+
+        Member member = new Member();
+        member.setId(1L);
+        member.setEmail("injin@email.com");
+
+        when(memberService.findById(any()))
+                .thenReturn(Optional.of(member))
+                .thenThrow(new RuntimeException())
+                .thenReturn(Optional.empty())
+        ;
+        Optional<Member> byId = memberService.findById(1L);
+        assertEquals("injin@email.com", byId.get().getEmail());
+
+        assertThrows(RuntimeException.class, () -> {
+            memberService.findById(1L);
+        });
+
+        assertEquals(Optional.empty(), memberService.findById(1L));
+
+
     }
 
 
