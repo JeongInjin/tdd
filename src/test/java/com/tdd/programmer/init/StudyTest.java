@@ -1,4 +1,4 @@
-package com.tdd.programmer;
+package com.tdd.programmer.init;
 
 import com.tdd.programmer.domain.Study;
 import org.junit.jupiter.api.*;

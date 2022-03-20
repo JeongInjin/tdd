@@ -1,4 +1,4 @@
-package com.tdd.programmer.study;
+package com.tdd.programmer.mockito;
 
 import com.tdd.programmer.domain.Study;
 import lombok.RequiredArgsConstructor;

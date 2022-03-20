@@ -1,4 +1,4 @@
-package com.tdd.programmer;
+package com.tdd.programmer.init;
 
 import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
 import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;

@@ -1,4 +1,4 @@
-package com.tdd.programmer;
+package com.tdd.programmer.init;
 
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
@@ -11,6 +11,6 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 @Test
-@Tag("fast")
-public @interface FastTest {
+@Tag("slow")
+public @interface SlowTest {
 }
