@@ -22,6 +22,8 @@ import java.util.function.Function;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -316,6 +318,7 @@ class StudyServiceTest {
 
     @Test
     void createNewStudy_verify() {
+        //given
         StudyService studyService = new StudyService(memberService, studyRepository);
         assertNotNull(studyService);
 
@@ -328,9 +331,11 @@ class StudyServiceTest {
         when(memberService.findById(1L)).thenReturn(Optional.of(member));
         when(studyRepository.save(study)).thenReturn(study);
 
+        //when
         studyService.createNewStudy(1L, study);
-        assertEquals("injin@eamil.com", member.getEmail());
 
+        //then
+        assertEquals("injin@eamil.com", member.getEmail());
         //횟수검증
         verify(memberService, times(1)).notify(study);
 
@@ -344,6 +349,29 @@ class StudyServiceTest {
 
         //더이상 mock 사용이 없는지 검증
         verifyNoMoreInteractions(memberService);
+    }
+
+    @Test
+    void createNewStudy_bdd() {
+        // Given
+        StudyService studyService = new StudyService(memberService, studyRepository);
+        assertNotNull(studyService);
+
+        Member member = new Member();
+        member.setId(1L);
+        member.setEmail("keesun@email.com");
+
+        Study study = new Study(10, "테스트");
+
+        given(memberService.findById(1L)).willReturn(Optional.of(member));
+
+        // When
+        studyService.createNewStudy(1L, study);
+
+        // Then
+        assertEquals(1L, study.getOwnerId());
+        then(memberService).should(times(1)).notify(study);
+        then(memberService).shouldHaveNoMoreInteractions();
     }
 
 
