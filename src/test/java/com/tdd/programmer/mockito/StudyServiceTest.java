@@ -7,6 +7,7 @@ import com.tdd.programmer.study.StudyRepository;
 import com.tdd.programmer.study.StudyService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Example;
@@ -311,6 +312,38 @@ class StudyServiceTest {
 
         studyService.createNewStudy(1L, study);
         assertEquals("injin@eamil.com", member.getEmail());
+    }
+
+    @Test
+    void createNewStudy_verify() {
+        StudyService studyService = new StudyService(memberService, studyRepository);
+        assertNotNull(studyService);
+
+        Member member = new Member();
+        member.setId(1L);
+        member.setEmail("injin@eamil.com");
+
+        Study study = new Study(11, "test");
+
+        when(memberService.findById(1L)).thenReturn(Optional.of(member));
+        when(studyRepository.save(study)).thenReturn(study);
+
+        studyService.createNewStudy(1L, study);
+        assertEquals("injin@eamil.com", member.getEmail());
+
+        //횟수검증
+        verify(memberService, times(1)).notify(study);
+
+        verify(memberService, times(1)).notify(member);
+        verify(memberService, never()).validate(any());
+
+        //순서 검증
+        InOrder inOrder = inOrder(memberService);
+        inOrder.verify(memberService).notify(study);
+        inOrder.verify(memberService).notify(member);
+
+        //더이상 mock 사용이 없는지 검증
+        verifyNoMoreInteractions(memberService);
     }
 
 
