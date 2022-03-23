@@ -3,6 +3,8 @@ package com.tdd.programmer.mockito;
 import com.tdd.programmer.domain.Member;
 import com.tdd.programmer.domain.Study;
 import com.tdd.programmer.member.MemberService;
+import com.tdd.programmer.study.StudyRepository;
+import com.tdd.programmer.study.StudyService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -291,7 +293,24 @@ class StudyServiceTest {
 
         assertEquals(Optional.empty(), memberService.findById(1L));
 
+    }
 
+    @Test
+    void createNewStudy() {
+        StudyService studyService = new StudyService(memberService, studyRepository);
+        assertNotNull(studyService);
+
+        Member member = new Member();
+        member.setId(1L);
+        member.setEmail("injin@eamil.com");
+
+        Study study = new Study(11, "test");
+
+        when(memberService.findById(1L)).thenReturn(Optional.of(member));
+        when(studyRepository.save(study)).thenReturn(study);
+
+        studyService.createNewStudy(1L, study);
+        assertEquals("injin@eamil.com", member.getEmail());
     }
 
 

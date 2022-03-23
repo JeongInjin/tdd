@@ -1,4 +1,4 @@
-package com.tdd.programmer.mockito;
+package com.tdd.programmer.study;
 
 import com.tdd.programmer.domain.Member;
 import com.tdd.programmer.domain.Study;
