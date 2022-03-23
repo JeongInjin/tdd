@@ -2,6 +2,7 @@ package com.tdd.programmer.mockito;
 
 import com.tdd.programmer.domain.Member;
 import com.tdd.programmer.domain.Study;
+import com.tdd.programmer.domain.StudyStatus;
 import com.tdd.programmer.member.MemberService;
 import com.tdd.programmer.study.StudyRepository;
 import com.tdd.programmer.study.StudyService;
@@ -372,6 +373,23 @@ class StudyServiceTest {
         assertEquals(1L, study.getOwnerId());
         then(memberService).should(times(1)).notify(study);
         then(memberService).shouldHaveNoMoreInteractions();
+    }
+
+    @Test
+    void openStudy() {
+        //Given
+        StudyService studyService = new StudyService(memberService, studyRepository);
+        Study study = new Study(10, "스터디 테스트");
+        given(studyRepository.save(study)).willReturn(study);
+        assertNull(study.getOpenedDateTime());
+
+        //WHen
+        studyService.openStudy(study);
+
+        //Then
+        assertEquals(StudyStatus.OPENED, study.getStatus());
+        assertNotNull(study.getOpenedDateTime());
+        then(memberService).should().notify(study);
     }
 
 
