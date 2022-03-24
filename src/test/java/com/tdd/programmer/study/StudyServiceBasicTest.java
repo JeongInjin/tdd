@@ -1,11 +1,9 @@
-package com.tdd.programmer.mockito;
+package com.tdd.programmer.study;
 
 import com.tdd.programmer.domain.Member;
 import com.tdd.programmer.domain.Study;
 import com.tdd.programmer.domain.StudyStatus;
 import com.tdd.programmer.member.MemberService;
-import com.tdd.programmer.study.StudyRepository;
-import com.tdd.programmer.study.StudyService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InOrder;
@@ -28,7 +26,7 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class StudyServiceTest {
+class StudyServiceBasicTest {
 
     /**
      * mock annotation 사용 방법
